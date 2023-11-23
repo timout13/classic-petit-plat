@@ -1,9 +1,10 @@
 export function recipeTemplate(recipe) {
   function appendIngredient(ingredient) {
-    return `<li class="flex-[50%]">
-                  <p class="text-[14px] font-body font-medium">${
-                    ingredient.ingredient
-                  }</p>
+    return `<li class="flex-[40%]">
+                  <p class="text-[14px] font-body line-clamp-1 font-medium"
+                  title="${ingredient.ingredient}">
+                    ${ingredient.ingredient}
+                  </p>
                   <p class="text-[14px] font-body text-grey">
                     ${ingredient.quantity}  
                     ${ingredient.unit !== undefined ? `${ingredient.unit}` : ""}
@@ -21,13 +22,15 @@ export function recipeTemplate(recipe) {
               }" alt="${recipe.name}">
             </div>
             <div class="pt-[32px] flex flex-1 flex-col pb-[61px] px-[25px]">
-              <h2 class="font-main text-[18px]">${recipe.name}</h2>
+              <h2 class="font-main text-[18px] line-clamp-1" title="${recipe.name}">
+                ${recipe.name}
+              </h2>
               <h3 class="mt-[29px] text-[12px] font-body font-bold uppercase">Recette</h3>
-              <p class="mt-[15px] text-[14px]">${
+              <p class="mt-[15px] text-[14px] line-clamp-3">${
                 recipe.description
               }</p>              
-              <h3 class="mt-[32px] mt-auto mb-[15px] text-[12px] font-body font-bold uppercase">Ingrédients</h3>
-              <ul class="flex flex-wrap gap-y-[21px]">
+              <h3 class="mt-[32px] mb-[15px] text-[12px] font-body font-bold uppercase">Ingrédients</h3>
+              <ul class="flex flex-wrap gap-x-[10px] gap-y-[21px]">
               ${recipe.ingredients
                 .map((ingredient) => appendIngredient(ingredient))
                 .join("")}

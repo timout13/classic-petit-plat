@@ -7,22 +7,23 @@ export async function search(userSearch) {
     .catch((err) => console.log(err));
 
   /* FORMAT DATA */
-  let allRecette = unformattedRecette.map((recette) => {
+  let formattedRecette = unformattedRecette.map((recette) => {
     let ingredients = recette.ingredients.reduce((acc, current) => {
       //console.log(acc, current);
       return (acc == "" ? acc : acc + ",") + current.ingredient;
     }, "");
-    recette.ingredients = ingredients;
+    recette.formattedIngredients = ingredients;
     return recette;
   });
 
   /* FILTER DATA */
-  let filteredRecette = allRecette.filter((recette) => {
+  let filteredRecette = formattedRecette.filter((recette) => {
     return (
       recette.name.includes(userSearch) ||
       recette.description.includes(userSearch) ||
-      recette.ingredients.includes(userSearch)
+      recette.formattedIngredients.includes(userSearch)
     );
   });
+
   return filteredRecette;
 }

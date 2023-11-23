@@ -1,4 +1,10 @@
 {
+  "name": "classic-petit-plats",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "tailwind": "npx tailwindcss -i ./assets/css/style.css -o ./assets/css/output.css --watch"
+  },
   "devDependencies": {
     "tailwindcss": "^3.3.5"
   }

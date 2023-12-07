@@ -1,11 +1,5 @@
-import { ajaxRequest } from "../utils/ajaxRequest.js";
 
-export async function search(userSearch) {
-  /* GET DATA */
-  let unformattedRecette = await ajaxRequest("GET", "/backEnd/data.json", null)
-    .then((res) => res)
-    .catch((err) => console.log(err));
-
+export function formatRecipe(unformattedRecette) {
   /* FORMAT DATA */
   let formattedRecette = unformattedRecette.map((recette) => {
     let ingredients = recette.ingredients.reduce((acc, current) => {
@@ -15,7 +9,9 @@ export async function search(userSearch) {
     recette.formattedIngredients = ingredients;
     return recette;
   });
-
+  return formattedRecette;
+}
+export function search(formattedRecette, userSearch) {
   /* FILTER DATA */
   let filteredRecette = formattedRecette.filter((recette) => {
     return (
@@ -26,4 +22,11 @@ export async function search(userSearch) {
   });
 
   return filteredRecette;
+}
+
+
+export function filter(recette) {
+ 
+
+  return recette;
 }

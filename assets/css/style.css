@@ -10,3 +10,10 @@
 .icon-search:hover .icon-search-child{
   stroke: black;
 }
+.custom-select--reverse{
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.custom-select--reverse .icon-dropdown{
+ transform: rotate(180deg);
+}

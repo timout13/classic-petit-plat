@@ -28,7 +28,7 @@
   </header>
   <section class="px-[102px] pt-[20px] bg-bg">
     <div class="flex gap-[64px]">
-      <div class="custom-select relative bg-white rounded-[11px]">
+      <div class="custom-select custom-select--ingredient relative bg-white rounded-[11px]">
         <div class="custom-select-action px-[16px] py-[17px] gap-[63px] flex items-center">
           <span class="cursor-default">Ingrédients</span>
           <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none">
@@ -51,13 +51,11 @@
               </div>
             </div>
           </div>
-          <ul class="flex flex-col pt-[24px] w-full">
-            <li data-value="Crème de coco" class="select-option px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
-              Crème de coco
-            </li>
-            <li data-value="Eau" class="select-option px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
-              Eau
-            </li>
+          <ul class="flex flex-col pt-[24px] w-full overflow-auto h-[211px]">
+            <template id="list-item">
+              <li data-value="" class="select-option px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
+              </li>
+            </template>
           </ul>
         </div>
       </div>

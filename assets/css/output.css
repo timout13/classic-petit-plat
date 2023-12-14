@@ -670,6 +670,10 @@ video {
   display: flex;
 }
 
+.list-item{
+  display: list-item;
+}
+
 .hidden{
   display: none;
 }
@@ -696,6 +700,14 @@ video {
 
 .h-full{
   height: 100%;
+}
+
+.h-\[\]{
+  height: ;
+}
+
+.h-\[211px\]{
+  height: 211px;
 }
 
 .w-6{
@@ -803,6 +815,10 @@ video {
 
 .gap-y-\[66px\]{
   row-gap: 66px;
+}
+
+.overflow-auto{
+  overflow: auto;
 }
 
 .rounded{

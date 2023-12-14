@@ -3,7 +3,7 @@ export function formatRecipe(unformattedRecette) {
   let formattedRecette = unformattedRecette.map((recette) => {
     let ingredients = recette.ingredients.reduce((acc, current) => {
       //console.log(acc, current);
-      return (acc == "" ? acc : acc + ",") + current.ingredient;
+      return (acc == "" ? acc : acc + ",") + current.ingredient.toLowerCase();
     }, "");
     recette.formattedIngredients = ingredients;
     return recette;
@@ -25,9 +25,7 @@ export function search(formattedRecette, userSearch) {
 
 export function filter(formattedRecette, tagValue) {
   let filteredRecette = formattedRecette.filter((recette) => {
-    console.log(recette, tagValue);
     return recette.formattedIngredients.includes(tagValue);
   });
-console.log(filteredRecette);
   return filteredRecette;
 }

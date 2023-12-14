@@ -1,4 +1,3 @@
-
 export function formatRecipe(unformattedRecette) {
   /* FORMAT DATA */
   let formattedRecette = unformattedRecette.map((recette) => {
@@ -24,9 +23,11 @@ export function search(formattedRecette, userSearch) {
   return filteredRecette;
 }
 
-
-export function filter(recette) {
- 
-
-  return recette;
+export function filter(formattedRecette, tagValue) {
+  let filteredRecette = formattedRecette.filter((recette) => {
+    console.log(recette, tagValue);
+    return recette.formattedIngredients.includes(tagValue);
+  });
+console.log(filteredRecette);
+  return filteredRecette;
 }

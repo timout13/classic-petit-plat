@@ -40,7 +40,11 @@ async function buildRecipeWpChild(unformattedRecette) {
   const searchBar = document.querySelector('[name="searchbar"]');
   let userSearch = searchBar.getAttribute("data-userSearch");
   // Récupère valeurs des tags pour filtrer
-  let tag = "";
+  const tagValues = Array.from(
+    document.querySelectorAll("[data-tagValue]")
+  ).map((element) => element.getAttribute("data-tagValue"));
+  tagValues && console.log(tagValues);
+
   /* Initialize the card section */
   let recipeWp = document.querySelector(".recipeWp");
   recipeWp.replaceChildren();
@@ -50,8 +54,11 @@ async function buildRecipeWpChild(unformattedRecette) {
     formattedRecipe = search(formattedRecipe, userSearch);
   }
   // foreach() Tags => filter()
-  if (tag != "") {
-    formattedRecipe = filter(formattedRecipe);
+  if (tagValues.length > 0) {
+    tagValues.forEach(
+      (tagValue) => (formattedRecipe = filter(formattedRecipe, tagValue))
+    );
+    //formattedRecipe = filter(formattedRecipe);
   }
   let allRecipe = Object.values(formattedRecipe);
   updateRecipeCounter(allRecipe.length);
@@ -76,14 +83,18 @@ function handleCustomSelect(e) {
 }
 function handleSelectFilter(e, unformattedRecette) {
   let filterValue = e.target.getAttribute("data-value");
-  const tag = document.querySelector(
-    `[data-tagValue="${filterValue}"]`
-  );
+  let tag = document.querySelector(`[data-tagValue="${filterValue}"]`);
   
-  console.log(tag);
   // crée un tag pour la valeur sélectionnée
-  
-  !tag && tagTemplate(filterValue);
-
+  tag || tagTemplate(filterValue);
+  tag || buildRecipeWpChild(unformattedRecette);
+  tag = document.querySelector(`[data-tagValue="${filterValue}"]`).parentNode;
+  const tagBtnClose = tag.querySelector('.btn-close');
+  console.log(tagBtnClose);
+  tagBtnClose.addEventListener("click", (e) => {
+    tag.remove();
+    buildRecipeWpChild(unformattedRecette);
+  });
+;
 }
 initPage();

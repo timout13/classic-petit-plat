@@ -2,7 +2,6 @@ export function formatRecipe(unformattedRecette) {
   /* FORMAT DATA */
   let formattedRecette = unformattedRecette.map((recette) => {
     let ingredients = recette.ingredients.reduce((acc, current) => {
-      //console.log(acc, current);
       return (acc == "" ? acc : acc + ",") + current.ingredient.toLowerCase();
     }, "");
     recette.formattedIngredients = ingredients;
@@ -28,4 +27,10 @@ export function filter(formattedRecette, tagValue) {
     return recette.formattedIngredients.includes(tagValue);
   });
   return filteredRecette;
+}
+
+export function searchInFilters(list, userSearch) {
+  /* FILTER DATA */
+  list = list.filter((item) => item.includes(userSearch));
+  return list;
 }

@@ -1,4 +1,9 @@
-import { search, filter, formatRecipe } from "./utils/search.js";
+import {
+  search,
+  filter,
+  formatRecipe,
+  searchInFilters,
+} from "./utils/search.js";
 import { recipeTemplate } from "./template/recipe.js";
 import { tagTemplate } from "./template/tag.js";
 import { listItemTemplate } from "./template/list-item.js";
@@ -10,8 +15,9 @@ async function initPage() {
     .then((res) => res)
     .catch((err) => console.log(err));
   const searchBar = document.querySelector('[name="searchbar"]');
-  appendToSelects(unformattedRecette);
-  const allSelectOptions = document.querySelectorAll(".select-option");
+  appendToSelects(unformattedRecette, "", true);
+  filterSearchBar(unformattedRecette);
+
   const allSelect = document.querySelectorAll(".custom-select-action");
   buildRecipeWpChild(unformattedRecette);
   searchBar.addEventListener("input", (e) =>
@@ -20,11 +26,7 @@ async function initPage() {
   allSelect.forEach((select) => {
     select.addEventListener("click", handleCustomSelect);
   });
-  allSelectOptions.forEach((selectOption) => {
-    selectOption.addEventListener("click", (e) =>
-      handleSelectFilter(e, unformattedRecette)
-    );
-  });
+  selectAddEventToItem();
 }
 async function handleSearchBar(e, unformattedRecette) {
   let userSearch = e.target.value;
@@ -44,7 +46,6 @@ async function buildRecipeWpChild(unformattedRecette) {
   const tagValues = Array.from(
     document.querySelectorAll("[data-tagValue]")
   ).map((element) => element.getAttribute("data-tagValue"));
-  tagValues && console.log(tagValues);
 
   /* Initialize the card section */
   let recipeWp = document.querySelector(".recipeWp");
@@ -70,7 +71,15 @@ function updateRecipeCounter(counter) {
   let recipeCounter = document.querySelector("#nb-recipe");
   recipeCounter.innerHTML = `${counter} Recette(s)`;
 }
-
+/* Apply listeners to all select item */
+function selectAddEventToItem(unformattedRecette) {
+  const allSelectOptions = document.querySelectorAll(".select-option");
+  allSelectOptions.forEach((selectOption) => {
+    selectOption.addEventListener("click", (e) =>
+      handleSelectFilter(e, unformattedRecette)
+    );
+  });
+}
 function handleCustomSelect(e) {
   const dropdown = document.querySelector(".custom-select-search");
   const selectAction = e.currentTarget;
@@ -85,18 +94,16 @@ function handleCustomSelect(e) {
 function handleSelectFilter(e, unformattedRecette) {
   let filterValue = e.target.getAttribute("data-value");
   let tag = document.querySelector(`[data-tagValue="${filterValue}"]`);
-  
+
   // crée un tag pour la valeur sélectionnée
   tag || tagTemplate(filterValue);
   tag || buildRecipeWpChild(unformattedRecette);
   tag = document.querySelector(`[data-tagValue="${filterValue}"]`).parentNode;
-  const tagBtnClose = tag.querySelector('.btn-close');
-  console.log(tagBtnClose);
+  const tagBtnClose = tag.querySelector(".btn-close");
   tagBtnClose.addEventListener("click", (e) => {
     tag.remove();
     buildRecipeWpChild(unformattedRecette);
   });
-;
 }
 function getIngredient(unformattedRecette) {
   const allIngredients = unformattedRecette.map((recipe) =>
@@ -106,20 +113,52 @@ function getIngredient(unformattedRecette) {
 
   /* Supprime les doublons */
   let uniqueIngredient = [...new Set(ingredientsList)];
-const sortedIngredientsList = uniqueIngredient.sort((a, b) =>
-  a.localeCompare(b, "fr", { ignorePunctuation: true })
-);
+  const sortedIngredientsList = uniqueIngredient.sort((a, b) =>
+    a.localeCompare(b, "fr", { ignorePunctuation: true })
+  );
 
-return sortedIngredientsList;
+  return sortedIngredientsList;
 }
-function appendToSelects(unformattedRecette) {
-  const ingredients = getIngredient(unformattedRecette);
+/* Function -- appendToSelects() :
+  Filter list by userSearch / 
+  Remove old list /
+  Create new items /
+  Append its & apply listeners
+*/
+function appendToSelects(unformattedRecette, userSearch, init = false) {
+  //Filter by userSearch
+  let ingredients = getIngredient(unformattedRecette);
   const ingredientsDomList = document.querySelector(
     ".custom-select--ingredient .custom-select-search ul"
   );
-  ingredients.forEach(ingredient => {
-    listItemTemplate(ingredient, ingredientsDomList);
-    })
-  
+
+  ingredients = userSearch
+    ? searchInFilters(ingredients, userSearch)
+    : searchInFilters(ingredients, "");
+  console.log(userSearch, ingredients);
+  //Remove old list
+    let allChilds = document.querySelectorAll("[data-delete]");
+    if (!init) {
+      allChilds.length > 0 &&
+        allChilds.forEach((child) => {
+          child.remove();
+        });
+    }
+  // Create new items
+  ingredients.forEach((ingredient) => {listItemTemplate(ingredient, ingredientsDomList);});
+  // Apply listeners
+  selectAddEventToItem(unformattedRecette);
 }
+function filterSearchBar(unformattedRecette) {
+  const allFilterSearchBar = document.querySelectorAll(".filter-searchbar");
+  allFilterSearchBar.forEach((filterSearchBar) => {
+    filterSearchBar.addEventListener("input", (e) => {
+      const userSearch = e.currentTarget.value ? e.currentTarget.value : "";
+      if (filterSearchBar.name.includes("ingredient")) {
+        appendToSelects(unformattedRecette, userSearch);
+      }
+    });
+  });
+}
+
 initPage();

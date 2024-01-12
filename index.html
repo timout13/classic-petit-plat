@@ -59,6 +59,38 @@
           </ul>
         </div>
       </div>
+      <div class="custom-select custom-select--ustensil relative bg-white rounded-[11px]">
+        <div class="custom-select-action px-[16px] py-[17px] gap-[63px] flex items-center">
+          <span class="cursor-default">Ustensiles</span>
+          <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none">
+            <path d="M1 1L7.5 7L14 1" stroke="#1B1B1B" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div
+          class="custom-select-search rounded-b-[11px] hidden bg-white w-full flex-col items-center absolute bottom-0 translate-y-full  z-10">
+          <div class="w-full">
+            <div class=" mx-[16px] bg-white flex border border-gray-200 rounded">
+              <input name="search_filter_ustensil" placeholder=""
+                class="filter-searchbar p-1 appearance-none outline-none w-full text-gray-800">
+              <div class="text-gray-300 w-8 py-1 pl-2 pr-1 flex items-center border-gray-200">
+                <button class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="5" cy="5" r="4.75" stroke="#7A7A7A" stroke-width="0.5" />
+                    <line x1="9.17678" y1="9.32322" x2="13.6768" y2="13.8232" stroke="#7A7A7A" stroke-width="0.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ul class="flex flex-col pt-[24px] w-full overflow-auto h-[211px]">
+            <template id="list-item">
+              <li data-value="" class="select-option px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+      
       <p class="font-main flex-1 text-end" id="nb-recipe">15000 recettes</p>
     </div>
     <div class="tagWp flex mt-[21px] gap-[64px]">

@@ -15,7 +15,8 @@ async function initPage() {
     .then((res) => res)
     .catch((err) => console.log(err));
   const searchBar = document.querySelector('[name="searchbar"]');
-  appendToSelects(unformattedRecette, "", true);
+  appendToSelects({keyname:'ingredient', unformattedRecette: unformattedRecette }, "", true);
+  appendToSelects({keyname:'ustensil', unformattedRecette: unformattedRecette }, "", true);
   filterSearchBar(unformattedRecette);
 
   const allSelect = document.querySelectorAll(".custom-select-action");
@@ -26,7 +27,7 @@ async function initPage() {
   allSelect.forEach((select) => {
     select.addEventListener("click", handleCustomSelect);
   });
-  selectAddEventToItem();
+  selectAddEventToItem(unformattedRecette);
 }
 async function handleSearchBar(e, unformattedRecette) {
   let userSearch = e.target.value;
@@ -81,8 +82,8 @@ function selectAddEventToItem(unformattedRecette) {
   });
 }
 function handleCustomSelect(e) {
-  const dropdown = document.querySelector(".custom-select-search");
   const selectAction = e.currentTarget;
+  const dropdown = selectAction.nextElementSibling;
   if (dropdown.classList.contains("hidden")) {
     selectAction.parentNode.classList.add("custom-select--reverse");
     dropdown.classList.remove("hidden");
@@ -94,7 +95,6 @@ function handleCustomSelect(e) {
 function handleSelectFilter(e, unformattedRecette) {
   let filterValue = e.target.getAttribute("data-value");
   let tag = document.querySelector(`[data-tagValue="${filterValue}"]`);
-
   // crée un tag pour la valeur sélectionnée
   tag || tagTemplate(filterValue);
   tag || buildRecipeWpChild(unformattedRecette);
@@ -119,33 +119,57 @@ function getIngredient(unformattedRecette) {
 
   return sortedIngredientsList;
 }
+function getUstensils(unformattedRecette) {
+  const allIngredients = unformattedRecette.map((recipe) =>
+    recipe.ustensils.map(ustensil=> ustensil.toLowerCase())
+  );
+  const ingredientsList = allIngredients.flat();
+
+  /* Supprime les doublons */
+  let uniqueIngredient = [...new Set(ingredientsList)];
+  const sortedIngredientsList = uniqueIngredient.sort((a, b) =>
+    a.localeCompare(b, "fr", { ignorePunctuation: true })
+  );
+  return sortedIngredientsList;
+}
 /* Function -- appendToSelects() :
   Filter list by userSearch / 
   Remove old list /
   Create new items /
   Append its & apply listeners
 */
-function appendToSelects(unformattedRecette, userSearch, init = false) {
+function appendToSelects({keyname, unformattedRecette}, userSearch, init = false) {
   //Filter by userSearch
-  let ingredients = getIngredient(unformattedRecette);
-  const ingredientsDomList = document.querySelector(
-    ".custom-select--ingredient .custom-select-search ul"
-  );
 
-  ingredients = userSearch
-    ? searchInFilters(ingredients, userSearch)
-    : searchInFilters(ingredients, "");
-  console.log(userSearch, ingredients);
+  let domList = null;
+  let filterList = [];
+
+  if (keyname?.includes('ingredient')) {
+    filterList = getIngredient(unformattedRecette);
+    domList = document.querySelector(
+      ".custom-select--ingredient .custom-select-search ul"
+    );
+  }else if (keyname?.includes("ustensil")) {
+    filterList = getUstensils(unformattedRecette);
+    domList = document.querySelector(
+      ".custom-select--ustensil .custom-select-search ul"
+    );
+  }
+  filterList = userSearch
+    ? searchInFilters(filterList, userSearch)
+    : searchInFilters(filterList, "");
   //Remove old list
-    let allChilds = document.querySelectorAll("[data-delete]");
+    let allChilds = domList.querySelectorAll("[data-delete]"); //Selectionner les enfants du select concerné uniquement
     if (!init) {
       allChilds.length > 0 &&
         allChilds.forEach((child) => {
           child.remove();
         });
     }
+  // initialise pour tous à chaque fois que l'un est sélectionné
+  // Correction à faire : initailiser la list seulement pour le select concerné
   // Create new items
-  ingredients.forEach((ingredient) => {listItemTemplate(ingredient, ingredientsDomList);});
+  filterList.forEach((itemList) => {listItemTemplate(itemList, domList);});
   // Apply listeners
   selectAddEventToItem(unformattedRecette);
 }
@@ -154,9 +178,11 @@ function filterSearchBar(unformattedRecette) {
   allFilterSearchBar.forEach((filterSearchBar) => {
     filterSearchBar.addEventListener("input", (e) => {
       const userSearch = e.currentTarget.value ? e.currentTarget.value : "";
-      if (filterSearchBar.name.includes("ingredient")) {
-        appendToSelects(unformattedRecette, userSearch);
-      }
+      let filterObject = {
+        keyname: filterSearchBar.name,
+        unformattedRecette: unformattedRecette,
+      };
+        appendToSelects(filterObject, userSearch);
     });
   });
 }

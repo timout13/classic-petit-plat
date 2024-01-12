@@ -5,6 +5,8 @@ export function formatRecipe(unformattedRecette) {
       return (acc == "" ? acc : acc + ",") + current.ingredient.toLowerCase();
     }, "");
     recette.formattedIngredients = ingredients;
+    let ustensils = recette.ustensils.map((ustensil) => ustensil.toLowerCase());
+    recette.formattedUstensils = ustensils;
     return recette;
   });
   return formattedRecette;
@@ -24,7 +26,10 @@ export function search(formattedRecette, userSearch) {
 
 export function filter(formattedRecette, tagValue) {
   let filteredRecette = formattedRecette.filter((recette) => {
-    return recette.formattedIngredients.includes(tagValue);
+    return (
+      recette.formattedIngredients.includes(tagValue)||
+      recette.formattedUstensils.includes(tagValue)
+    )
   });
   return filteredRecette;
 }

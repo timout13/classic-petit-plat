@@ -26,10 +26,12 @@ export function search(formattedRecette, userSearch) {
 
 export function filter(formattedRecette, tagValue) {
   let filteredRecette = formattedRecette.filter((recette) => {
+    console.log(recette.appliance,tagValue);
     return (
-      recette.formattedIngredients.includes(tagValue)||
-      recette.formattedUstensils.includes(tagValue)
-    )
+      recette.formattedIngredients.includes(tagValue) ||
+      recette.formattedUstensils.includes(tagValue) ||
+      recette.appliance.toLowerCase().includes(tagValue)
+    );
   });
   return filteredRecette;
 }

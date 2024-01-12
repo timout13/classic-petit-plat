@@ -17,6 +17,7 @@ async function initPage() {
   const searchBar = document.querySelector('[name="searchbar"]');
   appendToSelects({keyname:'ingredient', unformattedRecette: unformattedRecette }, "", true);
   appendToSelects({keyname:'ustensil', unformattedRecette: unformattedRecette }, "", true);
+  appendToSelects({keyname:'appliance', unformattedRecette: unformattedRecette }, "", true);
   filterSearchBar(unformattedRecette);
 
   const allSelect = document.querySelectorAll(".custom-select-action");
@@ -120,17 +121,30 @@ function getIngredient(unformattedRecette) {
   return sortedIngredientsList;
 }
 function getUstensils(unformattedRecette) {
-  const allIngredients = unformattedRecette.map((recipe) =>
+  const allUstensils = unformattedRecette.map((recipe) =>
     recipe.ustensils.map(ustensil=> ustensil.toLowerCase())
   );
-  const ingredientsList = allIngredients.flat();
+  const ustensilsList = allUstensils.flat();
 
   /* Supprime les doublons */
-  let uniqueIngredient = [...new Set(ingredientsList)];
-  const sortedIngredientsList = uniqueIngredient.sort((a, b) =>
+  let uniqueUstensil = [...new Set(ustensilsList)];
+  const sortedUstensilsList = uniqueUstensil.sort((a, b) =>
     a.localeCompare(b, "fr", { ignorePunctuation: true })
   );
-  return sortedIngredientsList;
+  return sortedUstensilsList;
+}
+function getAppliances(unformattedRecette) {
+  const allAppliances = unformattedRecette.map((recipe) =>
+    recipe.appliance.toLowerCase()
+  );
+  const appliancesList = allAppliances.flat();
+
+  /* Supprime les doublons */
+  let uniqueAppliance = [...new Set(appliancesList)];
+  const sortedAppliancesList = uniqueAppliance.sort((a, b) =>
+    a.localeCompare(b, "fr", { ignorePunctuation: true })
+  );
+  return sortedAppliancesList;
 }
 /* Function -- appendToSelects() :
   Filter list by userSearch / 
@@ -144,15 +158,20 @@ function appendToSelects({keyname, unformattedRecette}, userSearch, init = false
   let domList = null;
   let filterList = [];
 
-  if (keyname?.includes('ingredient')) {
+  if (keyname?.includes("ingredient")) {
     filterList = getIngredient(unformattedRecette);
     domList = document.querySelector(
       ".custom-select--ingredient .custom-select-search ul"
     );
-  }else if (keyname?.includes("ustensil")) {
+  } else if (keyname?.includes("ustensil")) {
     filterList = getUstensils(unformattedRecette);
     domList = document.querySelector(
       ".custom-select--ustensil .custom-select-search ul"
+    );
+  } else if (keyname?.includes("appliance")) {
+    filterList = getAppliances(unformattedRecette);
+    domList = document.querySelector(
+      ".custom-select--appliance .custom-select-search ul"
     );
   }
   filterList = userSearch
@@ -166,8 +185,6 @@ function appendToSelects({keyname, unformattedRecette}, userSearch, init = false
           child.remove();
         });
     }
-  // initialise pour tous à chaque fois que l'un est sélectionné
-  // Correction à faire : initailiser la list seulement pour le select concerné
   // Create new items
   filterList.forEach((itemList) => {listItemTemplate(itemList, domList);});
   // Apply listeners

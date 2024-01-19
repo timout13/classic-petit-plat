@@ -1,72 +1,106 @@
 import {
   search,
-  filter,
-  formatRecipe,
+  advancedFilter,
+  formatRecipes,
   searchInFilters,
 } from "./utils/search.js";
 import { recipeTemplate } from "./template/recipe.js";
 import { tagTemplate } from "./template/tag.js";
 import { listItemTemplate } from "./template/list-item.js";
 import { ajaxRequest } from "./utils/ajaxRequest.js";
+import { getSortedList } from "./utils/getSortedList.js";
 
 async function initPage() {
   /* GET DATA */
-  let unformattedRecette = await ajaxRequest("GET", "/backEnd/data.json", null)
+  let unformattedRecipes = await ajaxRequest("GET", "/backEnd/data.json", null)
     .then((res) => res)
     .catch((err) => console.log(err));
   const searchBar = document.querySelector('[name="searchbar"]');
-  appendToSelects({keyname:'ingredient', unformattedRecette: unformattedRecette }, "", true);
-  appendToSelects({keyname:'ustensil', unformattedRecette: unformattedRecette }, "", true);
-  appendToSelects({keyname:'appliance', unformattedRecette: unformattedRecette }, "", true);
-  filterSearchBar(unformattedRecette);
+  appendToSelects(
+    { keyname: "ingredient", unformattedRecipes: unformattedRecipes },
+    "",
+    true
+  );
+  appendToSelects(
+    { keyname: "ustensil", unformattedRecipes: unformattedRecipes },
+    "",
+    true
+  );
+  appendToSelects(
+    { keyname: "appliance", unformattedRecipes: unformattedRecipes },
+    "",
+    true
+  );
+  filterSearchBar(unformattedRecipes);
 
   const allSelect = document.querySelectorAll(".custom-select-action");
-  buildRecipeWpChild(unformattedRecette);
+  buildRecipeWpChild(unformattedRecipes);
   searchBar.addEventListener("input", (e) =>
-    handleSearchBar(e, unformattedRecette)
+    handleSearchBar(e, unformattedRecipes)
   );
   allSelect.forEach((select) => {
     select.addEventListener("click", handleCustomSelect);
   });
-  selectAddEventToItem(unformattedRecette);
+  selectAddEventToItem(unformattedRecipes);
 }
-async function handleSearchBar(e, unformattedRecette) {
+async function handleSearchBar(e, unformattedRecipes) {
   let userSearch = e.target.value;
   if (userSearch.length > 2) {
     e.target.setAttribute("data-userSearch", userSearch);
-    buildRecipeWpChild(unformattedRecette);
+    buildRecipeWpChild(unformattedRecipes);
   } else {
   }
 }
 /* Filter data & build recipe card */
-async function buildRecipeWpChild(unformattedRecette) {
-  let formattedRecipe = formatRecipe(unformattedRecette);
-  // Mettre dans une var data-userSearch
-  const searchBar = document.querySelector('[name="searchbar"]');
-  let userSearch = searchBar.getAttribute("data-userSearch");
-  // Récupère valeurs des tags pour filtrer
-  const tagValues = Array.from(
-    document.querySelectorAll("[data-tagValue]")
-  ).map((element) => element.getAttribute("data-tagValue"));
+function buildRecipeWpChild(unformattedRecipes) {
+  let { formattedRecipes, userSearchBar, tagValues } =
+    getVarsToFilter(unformattedRecipes);
+
+  let filteredRecipes = filter(formattedRecipes, userSearchBar, tagValues);
 
   /* Initialize the card section */
   let recipeWp = document.querySelector(".recipeWp");
   recipeWp.replaceChildren();
 
-  //Mettre condition pour chaque filtrage pour les rendre optionnels
+  appendToSelects({
+    keyname: "ingredient",
+    unformattedRecipes: unformattedRecipes,
+  });
+  appendToSelects({
+    keyname: "ustensil",
+    unformattedRecipes: unformattedRecipes,
+  });
+  appendToSelects({
+    keyname: "appliance",
+    unformattedRecipes: unformattedRecipes,
+  });
+  updateRecipeCounter(filteredRecipes.length);
+  filteredRecipes.forEach((recipe) => recipeWp.append(recipeTemplate(recipe)));
+}
+function getVarsToFilter(unformattedRecipes) {
+  let formattedRecipes = formatRecipes(unformattedRecipes);
+  // Mettre dans une var data-userSearch
+  const searchBar = document.querySelector('[name="searchbar"]');
+  let userSearchBar = searchBar.getAttribute("data-userSearch");
+
+  // Récupère valeurs des tags pour filtrer
+  const tagValues = Array.from(
+    document.querySelectorAll("[data-tagValue]")
+  ).map((element) => element.getAttribute("data-tagValue"));
+  return { formattedRecipes, userSearchBar, tagValues };
+}
+function filter(recipes, userSearch = "", tagValues = []) {
   if (userSearch != "") {
-    formattedRecipe = search(formattedRecipe, userSearch);
+    recipes = search(recipes, userSearch);
   }
   // foreach() Tags => filter()
   if (tagValues.length > 0) {
     tagValues.forEach(
-      (tagValue) => (formattedRecipe = filter(formattedRecipe, tagValue))
+      (tagValue) => (recipes = advancedFilter(recipes, tagValue))
     );
-    //formattedRecipe = filter(formattedRecipe);
   }
-  let allRecipe = Object.values(formattedRecipe);
-  updateRecipeCounter(allRecipe.length);
-  allRecipe.forEach((recipe) => recipeWp.append(recipeTemplate(recipe)));
+  // Ajouter la userSearch à la searchBar du select concerné ?
+  return Object.values(recipes);
 }
 
 function updateRecipeCounter(counter) {
@@ -74,11 +108,11 @@ function updateRecipeCounter(counter) {
   recipeCounter.innerHTML = `${counter} Recette(s)`;
 }
 /* Apply listeners to all select item */
-function selectAddEventToItem(unformattedRecette) {
+function selectAddEventToItem(unformattedRecipes) {
   const allSelectOptions = document.querySelectorAll(".select-option");
   allSelectOptions.forEach((selectOption) => {
     selectOption.addEventListener("click", (e) =>
-      handleSelectFilter(e, unformattedRecette)
+      handleSelectFilter(e, unformattedRecipes)
     );
   });
 }
@@ -93,57 +127,36 @@ function handleCustomSelect(e) {
     dropdown.classList.add("hidden");
   }
 }
-function handleSelectFilter(e, unformattedRecette) {
+function handleSelectFilter(e, unformattedRecipes) {
   let filterValue = e.target.getAttribute("data-value");
   let tag = document.querySelector(`[data-tagValue="${filterValue}"]`);
   // crée un tag pour la valeur sélectionnée
   tag || tagTemplate(filterValue);
-  tag || buildRecipeWpChild(unformattedRecette);
+  tag || buildRecipeWpChild(unformattedRecipes);
   tag = document.querySelector(`[data-tagValue="${filterValue}"]`).parentNode;
   const tagBtnClose = tag.querySelector(".btn-close");
   tagBtnClose.addEventListener("click", (e) => {
     tag.remove();
-    buildRecipeWpChild(unformattedRecette);
+    buildRecipeWpChild(unformattedRecipes);
   });
 }
-function getIngredient(unformattedRecette) {
-  const allIngredients = unformattedRecette.map((recipe) =>
+function getIngredient(recipes) {
+  const allIngredients = recipes.map((recipe) =>
     recipe.ingredients.map((ingredient) => ingredient.ingredient.toLowerCase())
   );
-  const ingredientsList = allIngredients.flat();
-
-  /* Supprime les doublons */
-  let uniqueIngredient = [...new Set(ingredientsList)];
-  const sortedIngredientsList = uniqueIngredient.sort((a, b) =>
-    a.localeCompare(b, "fr", { ignorePunctuation: true })
-  );
-
+  const sortedIngredientsList = getSortedList(allIngredients);
   return sortedIngredientsList;
 }
-function getUstensils(unformattedRecette) {
-  const allUstensils = unformattedRecette.map((recipe) =>
-    recipe.ustensils.map(ustensil=> ustensil.toLowerCase())
+function getUstensils(recipes) {
+  const allUstensils = recipes.map((recipe) =>
+    recipe.ustensils.map((ustensil) => ustensil.toLowerCase())
   );
-  const ustensilsList = allUstensils.flat();
-
-  /* Supprime les doublons */
-  let uniqueUstensil = [...new Set(ustensilsList)];
-  const sortedUstensilsList = uniqueUstensil.sort((a, b) =>
-    a.localeCompare(b, "fr", { ignorePunctuation: true })
-  );
+  const sortedUstensilsList = getSortedList(allUstensils);
   return sortedUstensilsList;
 }
-function getAppliances(unformattedRecette) {
-  const allAppliances = unformattedRecette.map((recipe) =>
-    recipe.appliance.toLowerCase()
-  );
-  const appliancesList = allAppliances.flat();
-
-  /* Supprime les doublons */
-  let uniqueAppliance = [...new Set(appliancesList)];
-  const sortedAppliancesList = uniqueAppliance.sort((a, b) =>
-    a.localeCompare(b, "fr", { ignorePunctuation: true })
-  );
+function getAppliances(recipes) {
+  const allAppliances = recipes.map((recipe) => recipe.appliance.toLowerCase());
+  const sortedAppliancesList = getSortedList(allAppliances);
   return sortedAppliancesList;
 }
 /* Function -- appendToSelects() :
@@ -152,56 +165,81 @@ function getAppliances(unformattedRecette) {
   Create new items /
   Append its & apply listeners
 */
-function appendToSelects({keyname, unformattedRecette}, userSearch, init = false) {
+function appendToSelects(
+  { keyname, unformattedRecipes },
+  advancedUserSearch,
+  init = false
+) {
   //Filter by userSearch
 
   let domList = null;
   let filterList = [];
 
+  let { formattedRecipes, userSearchBar, tagValues } =
+    getVarsToFilter(unformattedRecipes);
+
+  let filteredRecipes = filter(formattedRecipes, userSearchBar, tagValues);
+
   if (keyname?.includes("ingredient")) {
-    filterList = getIngredient(unformattedRecette);
+    filterList = getIngredient(filteredRecipes);
     domList = document.querySelector(
       ".custom-select--ingredient .custom-select-search ul"
     );
   } else if (keyname?.includes("ustensil")) {
-    filterList = getUstensils(unformattedRecette);
+    filterList = getUstensils(filteredRecipes);
     domList = document.querySelector(
       ".custom-select--ustensil .custom-select-search ul"
     );
   } else if (keyname?.includes("appliance")) {
-    filterList = getAppliances(unformattedRecette);
+    filterList = getAppliances(filteredRecipes);
     domList = document.querySelector(
       ".custom-select--appliance .custom-select-search ul"
     );
   }
-  filterList = userSearch
-    ? searchInFilters(filterList, userSearch)
-    : searchInFilters(filterList, "");
+
+filterList = advancedUserSearch
+? searchInFilters(filterList, advancedUserSearch)
+: searchInFilters(filterList, "");
   //Remove old list
-    let allChilds = domList.querySelectorAll("[data-delete]"); //Selectionner les enfants du select concerné uniquement
-    if (!init) {
-      allChilds.length > 0 &&
-        allChilds.forEach((child) => {
-          child.remove();
-        });
-    }
+  let allChilds = domList.querySelectorAll("[data-delete]"); //Selectionner les enfants du select concerné uniquement
+  if (!init) {
+    allChilds.length > 0 &&
+      allChilds.forEach((child) => {
+        child.remove();
+      });
+  }
   // Create new items
-  filterList.forEach((itemList) => {listItemTemplate(itemList, domList);});
+  filterList.forEach((itemList) => {
+    listItemTemplate(itemList, domList);
+  });
   // Apply listeners
-  selectAddEventToItem(unformattedRecette);
+  selectAddEventToItem(unformattedRecipes);
 }
-function filterSearchBar(unformattedRecette) {
+function filterSearchBar(unformattedRecipes) {
   const allFilterSearchBar = document.querySelectorAll(".filter-searchbar");
   allFilterSearchBar.forEach((filterSearchBar) => {
     filterSearchBar.addEventListener("input", (e) => {
-      const userSearch = e.currentTarget.value ? e.currentTarget.value : "";
+      const advancedUserSearch = e.currentTarget.value
+        ? e.currentTarget.value
+        : "";
       let filterObject = {
         keyname: filterSearchBar.name,
-        unformattedRecette: unformattedRecette,
+        unformattedRecipes: unformattedRecipes,
       };
-        appendToSelects(filterObject, userSearch);
+      appendToSelects(filterObject, advancedUserSearch);
     });
   });
 }
 
 initPage();
+
+// Filtrer dans recherche principale 'tomate'
+
+// Est-ce qu'il faut faire une liste de tous les ingrédients dont la recette comporte aussi l'ingrédient 'tomate'
+
+// Au clique de la serachbar du select quel réaction ?
+
+// Prendre toutes les recettes et filtrer par 'tomate'
+// Envoyer les recettes dans les selects
+// Prends les ingrédients, etc, de chaque recette et faire la liste
+// Afficher la liste

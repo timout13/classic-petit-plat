@@ -1,4 +1,4 @@
-export function formatRecipe(unformattedRecette) {
+export function formatRecipes(unformattedRecette) {
   /* FORMAT DATA */
   let formattedRecette = unformattedRecette.map((recette) => {
     let ingredients = recette.ingredients.reduce((acc, current) => {
@@ -14,6 +14,7 @@ export function formatRecipe(unformattedRecette) {
 export function search(formattedRecette, userSearch) {
   /* FILTER DATA */
   let filteredRecette = formattedRecette.filter((recette) => {
+    console.log(recette.name , userSearch);
     return (
       recette.name.includes(userSearch) ||
       recette.description.includes(userSearch) ||
@@ -24,7 +25,7 @@ export function search(formattedRecette, userSearch) {
   return filteredRecette;
 }
 
-export function filter(formattedRecette, tagValue) {
+export function advancedFilter(formattedRecette, tagValue) {
   let filteredRecette = formattedRecette.filter((recette) => {
     console.log(recette.appliance,tagValue);
     return (

@@ -16,9 +16,9 @@ export function search(formattedRecette, userSearch) {
   let filteredRecette = formattedRecette.filter((recette) => {
     console.log(recette.name , userSearch);
     return (
-      recette.name.includes(userSearch) ||
-      recette.description.includes(userSearch) ||
-      recette.formattedIngredients.includes(userSearch)
+      recette.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+      recette.description.includes(userSearch.toLowerCase()) ||
+      recette.formattedIngredients.includes(userSearch.toLowerCase())
     );
   });
 

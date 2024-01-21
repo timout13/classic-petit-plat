@@ -707,6 +707,10 @@ video {
   height: 100%;
 }
 
+.h-screen{
+  height: 100vh;
+}
+
 .max-h-\[211px\]{
   max-height: 211px;
 }
@@ -1000,6 +1004,14 @@ video {
   padding-top: 32px;
 }
 
+.pb-\[\]{
+  padding-bottom: ;
+}
+
+.pb-\[100px\]{
+  padding-bottom: 100px;
+}
+
 .text-center{
   text-align: center;
 }
@@ -1032,12 +1044,21 @@ video {
   font-size: 44px;
 }
 
+.text-lg{
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 .font-bold{
   font-weight: 700;
 }
 
 .font-medium{
   font-weight: 500;
+}
+
+.font-semibold{
+  font-weight: 600;
 }
 
 .uppercase{

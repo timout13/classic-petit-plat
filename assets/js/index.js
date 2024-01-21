@@ -5,6 +5,7 @@ import {
   searchInFilters,
 } from "./utils/search.js";
 import { recipeTemplate } from "./template/recipe.js";
+import { noResultText } from "./template/no-result.js";
 import { tagTemplate } from "./template/tag.js";
 import { listItemTemplate } from "./template/list-item.js";
 import { ajaxRequest } from "./utils/ajaxRequest.js";
@@ -42,13 +43,30 @@ async function initPage() {
     select.addEventListener("click", handleCustomSelect);
   });
   selectAddEventToItem(unformattedRecipes);
+  btn_mainSearchBar.addEventListener("click", (e) => {
+    let tagValue = searchbar.value;
+    let tag = document.querySelector(`[data-tagValue="${tagValue}"`);
+    tag || tagTemplate(tagValue);
+    tag = document.querySelector(`[data-tagValue="${tagValue}"]`).parentNode;
+    searchbar.value = "";
+    searchbar.setAttribute('data-userSearch', "");
+    const tagBtnClose = tag.querySelector(".btn-close");
+    tagBtnClose.addEventListener("click", (e) => {
+      tag.remove();
+      buildRecipeWpChild(unformattedRecipes);
+    });
+  });
 }
-async function handleSearchBar(e, unformattedRecipes) {
+function handleSearchBar(e, unformattedRecipes) {
   let userSearch = e.target.value;
   if (userSearch.length > 2) {
+    btn_mainSearchBar.disabled = false;
+    btn_mainSearchBar.setAttribute("data-value", userSearch);
     e.target.setAttribute("data-userSearch", userSearch);
     buildRecipeWpChild(unformattedRecipes);
   } else {
+    btn_mainSearchBar.disabled = true;
+    btn_mainSearchBar.setAttribute("data-value", "");
   }
 }
 /* Filter data & build recipe card */
@@ -61,28 +79,31 @@ function buildRecipeWpChild(unformattedRecipes) {
   /* Initialize the card section */
   let recipeWp = document.querySelector(".recipeWp");
   recipeWp.replaceChildren();
-
-  appendToSelects({
-    keyname: "ingredient",
-    unformattedRecipes: unformattedRecipes,
-  });
-  appendToSelects({
-    keyname: "ustensil",
-    unformattedRecipes: unformattedRecipes,
-  });
-  appendToSelects({
-    keyname: "appliance",
-    unformattedRecipes: unformattedRecipes,
-  });
-  updateRecipeCounter(filteredRecipes.length);
-  filteredRecipes.forEach((recipe) => recipeWp.append(recipeTemplate(recipe)));
+  if (filteredRecipes.length > 0) {
+    appendToSelects({
+      keyname: "ingredient",
+      unformattedRecipes: unformattedRecipes,
+    });
+    appendToSelects({
+      keyname: "ustensil",
+      unformattedRecipes: unformattedRecipes,
+    });
+    appendToSelects({
+      keyname: "appliance",
+      unformattedRecipes: unformattedRecipes,
+    });
+    updateRecipeCounter(filteredRecipes.length);
+    filteredRecipes.forEach((recipe) => recipeWp.append(recipeTemplate(recipe)));
+  } else {
+    recipeWp.append(noResultText(userSearchBar));
+    updateRecipeCounter(0);
+  }
 }
 function getVarsToFilter(unformattedRecipes) {
   let formattedRecipes = formatRecipes(unformattedRecipes);
   // Mettre dans une var data-userSearch
   const searchBar = document.querySelector('[name="searchbar"]');
   let userSearchBar = searchBar.getAttribute("data-userSearch");
-
   // Récupère valeurs des tags pour filtrer
   const tagValues = Array.from(
     document.querySelectorAll("[data-tagValue]")

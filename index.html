@@ -8,16 +8,16 @@
   <link href="/assets/css/output.css" rel="stylesheet" />
 </head>
 
-<body>
-  <header class="py-[69px] px-[51px] bg-hero-pattern bg-cover bg-no-repeat">
+<body class="h-screen flex flex-col">
+  <header class="flex-1 py-[69px] px-[51px] bg-hero-pattern bg-cover bg-no-repeat">
     <img class="mb-[170px]" src="./assets/img/logo.svg" />
     <h1 class="text-[44px] mx-[275px] mb-[30px] text-warning text-center font-main">
       CHERCHEZ PARMI PLUS DE 1500 RECETTES DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES
     </h1>
     <div class="searchbar relative h-[72px] block max-w-[954px] w-full m-auto">
-      <input type="text" name="searchbar" data-userSearch="" class="h-[72px] px-[35px] w-full rounded-[11px]"
+      <input type="text" id="searchbar" name="searchbar" data-userSearch="" class="h-[72px] px-[35px] w-full rounded-[11px]"
         placeholder="Rechercher une recette, un ingrédient, ..." />
-      <button class="absolute right-0 top-1/2 translate-x-[-10px] translate-y-[-50%]">
+      <button id="btn_mainSearchBar" class="absolute right-0 top-1/2 translate-x-[-10px] translate-y-[-50%]">
         <svg class="icon-search rounded-xl bg-black hover:bg-warning" width="51" height="53" viewBox="0 0 51 53"
           fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle class="icon-search-child" cx="22" cy="22.4219" r="9.5" stroke="white" />
@@ -131,7 +131,10 @@
         </div>
       </template>
     </div>
-    <div class="recipeWp mt-[55px] flex flex-wrap gap-y-[66px] gap-x-[45px]">
+    <template id="template_noresult">
+      <p class="no_result_text font-semibold text-lg"></p>
+    </template>
+    <div class="recipeWp flex-1 mt-[55px] pb-[100px] flex flex-wrap gap-y-[66px] gap-x-[45px]">
       <template>
         <article class="rounded-[21px] flex flex-col relative bg-white h-article w-[380px]">
           <div class="h-[253px] rounded-t-[21px] bg-red-500">

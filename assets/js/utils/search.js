@@ -14,7 +14,6 @@ export function formatRecipes(unformattedRecette) {
 export function search(formattedRecette, userSearch) {
   /* FILTER DATA */
   let filteredRecette = formattedRecette.filter((recette) => {
-    console.log(recette.name , userSearch);
     return (
       recette.name.toLowerCase().includes(userSearch.toLowerCase()) ||
       recette.description.includes(userSearch.toLowerCase()) ||
@@ -27,8 +26,8 @@ export function search(formattedRecette, userSearch) {
 
 export function advancedFilter(formattedRecette, tagValue) {
   let filteredRecette = formattedRecette.filter((recette) => {
-    console.log(recette.appliance,tagValue);
     return (
+      recette.name.toLowerCase().includes(tagValue) ||
       recette.formattedIngredients.includes(tagValue) ||
       recette.formattedUstensils.includes(tagValue) ||
       recette.appliance.toLowerCase().includes(tagValue)

@@ -36,8 +36,9 @@ async function initPage() {
 
   const allSelect = document.querySelectorAll(".custom-select-action");
   buildRecipeWpChild(unformattedRecipes);
+  let prevSearchbarVal = '';
   searchBar.addEventListener("input", (e) =>
-    handleSearchBar(e, unformattedRecipes)
+   prevSearchbarVal = handleSearchBar(e, unformattedRecipes, prevSearchbarVal)
   );
   allSelect.forEach((select) => {
     select.addEventListener("click", handleCustomSelect);
@@ -57,17 +58,23 @@ async function initPage() {
     });
   });
 }
-function handleSearchBar(e, unformattedRecipes) {
+// eee
+function handleSearchBar(e, unformattedRecipes, prevSearchbarVal) {
   let userSearch = e.target.value;
-  if (userSearch.length > 2) {
-    btn_mainSearchBar.disabled = false;
-    btn_mainSearchBar.setAttribute("data-value", userSearch);
+  if (userSearch.length < prevSearchbarVal.length) {
+    btn_mainSearchBar.disabled = true;
+    btn_mainSearchBar.setAttribute("data-value", "");
     e.target.setAttribute("data-userSearch", userSearch);
     buildRecipeWpChild(unformattedRecipes);
   } else {
-    btn_mainSearchBar.disabled = true;
-    btn_mainSearchBar.setAttribute("data-value", "");
+    if (userSearch.length > 2 && userSearch.length > prevSearchbarVal.length ) {
+      btn_mainSearchBar.disabled = false;
+      btn_mainSearchBar.setAttribute("data-value", userSearch);
+      e.target.setAttribute("data-userSearch", userSearch);
+      buildRecipeWpChild(unformattedRecipes);
+    } 
   }
+  return prevSearchbarVal = userSearch;
 }
 /* Filter data & build recipe card */
 function buildRecipeWpChild(unformattedRecipes) {

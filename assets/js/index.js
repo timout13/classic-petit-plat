@@ -13,7 +13,7 @@ import { getSortedList } from "./utils/getSortedList.js";
 
 async function initPage() {
   /* GET DATA */
-  let unformattedRecipes = await ajaxRequest("GET", "/backEnd/data.json", null)
+  let unformattedRecipes = await ajaxRequest("GET", "backEnd/data.json", null)
     .then((res) => res)
     .catch((err) => console.log(err));
   const searchBar = document.querySelector('[name="searchbar"]');

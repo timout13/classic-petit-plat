@@ -1,27 +1,49 @@
-export function formatRecipes(unformattedRecette) {
-  /* FORMAT DATA */
-  let formattedRecette = unformattedRecette.map((recette) => {
-    let ingredients = recette.ingredients.reduce((acc, current) => {
-      return (acc == "" ? acc : acc + ",") + current.ingredient.toLowerCase();
-    }, "");
-    recette.formattedIngredients = ingredients;
-    let ustensils = recette.ustensils.map((ustensil) => ustensil.toLowerCase());
-    recette.formattedUstensils = ustensils;
-    return recette;
-  });
-  return formattedRecette;
+export function formatRecipes(unformattedRecipes) {
+  let formattedRecipes = [];
+  for (let recipe of unformattedRecipes) {
+    let ingredients = "";
+    let ustensils = [];
+    for (const recipeIngredient of recipe.ingredients) {
+      ingredients +=
+        ingredients === ""
+          ? recipeIngredient.ingredient.toLowerCase()
+          : ", " + recipeIngredient.ingredient.toLowerCase();
+    }
+    for (const recipeUstensil of recipe.ustensils) {
+      ustensils +=
+        ustensils === ""
+          ? recipeUstensil.toLowerCase()
+          : ", " + recipeUstensil.toLowerCase();
+    }
+    recipe.formattedIngredients = ingredients;
+    recipe.formattedUstensils = ustensils;
+    formattedRecipes.push(recipe);
+  }
+  return formattedRecipes;
 }
-export function search(formattedRecette, userSearch) {
+export function search(allRecipes, userSearch) {
   /* FILTER DATA */
-  let filteredRecette = formattedRecette.filter((recette) => {
-    return (
-      recette.name.toLowerCase().includes(userSearch.toLowerCase()) ||
-      recette.description.includes(userSearch.toLowerCase()) ||
-      recette.formattedIngredients.includes(userSearch.toLowerCase())
-    );
-  });
-
-  return filteredRecette;
+  let filteredRecipes = [];
+  userSearch = userSearch.toLowerCase();
+  console.log(allRecipes);
+  for (let i = 0; i < allRecipes.length; i++) {
+    if (allRecipes[i].name.toLowerCase().indexOf(userSearch) !== -1) {
+      filteredRecipes[allRecipes[i].id] = allRecipes[i];
+    }
+    if (!filteredRecipes[allRecipes[i].id]) {
+      if (allRecipes[i].description.toLowerCase().indexOf(userSearch) !== -1) {
+        filteredRecipes[allRecipes[i].id] = allRecipes[i];
+      }
+      if (!filteredRecipes[allRecipes[i].id]) {
+        for (const ingredient of allRecipes[i].ingredients) {
+          if (ingredient.ingredient.toLowerCase().indexOf(userSearch) !== -1) {
+            filteredRecipes[allRecipes[i].id] = allRecipes[i];
+          }
+        }
+      }
+    }
+  }
+  return filteredRecipes;
 }
 
 export function advancedFilter(formattedRecette, tagValue) {

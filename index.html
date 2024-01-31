@@ -15,8 +15,15 @@
       CHERCHEZ PARMI PLUS DE 1500 RECETTES DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES
     </h1>
     <div class="searchbar relative h-[72px] block max-w-[954px] w-full m-auto">
-      <input type="text" id="searchbar" name="searchbar" data-userSearch="" class="h-[72px] px-[35px] w-full rounded-[11px]"
+      <input type="text" id="searchbar" name="searchbar" data-userSearch=""
+        class="input-mainSbar input h-[72px] px-[35px] w-full rounded-[11px]"
         placeholder="Rechercher une recette, un ingrédient, ..." />
+      <button id="" class="btn-input-remove hidden absolute right-0 top-1/2 translate-x-[-80px] translate-y-[-50%]" data-target="mainSbar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+          <path d="M15 15L8.5 8.5M8.5 8.5L2 2M8.5 8.5L15 2M8.5 8.5L2 15" stroke="#7A7A7A" stroke-width="2.16667"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
       <button id="btn_mainSearchBar" class="absolute right-0 top-1/2 translate-x-[-10px] translate-y-[-50%]">
         <svg class="icon-search rounded-xl bg-black hover:bg-warning" width="51" height="53" viewBox="0 0 51 53"
           fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,7 +38,8 @@
       <div class="custom-select custom-select--ingredient relative bg-white rounded-[11px]">
         <div class="custom-select-action px-[16px] py-[17px] gap-[63px] flex items-center">
           <span class="cursor-default">Ingrédients</span>
-          <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none">
+          <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8"
+            fill="none">
             <path d="M1 1L7.5 7L14 1" stroke="#1B1B1B" stroke-linecap="round" />
           </svg>
         </div>
@@ -40,7 +48,13 @@
           <div class="w-full">
             <div class=" mx-[16px] bg-white flex border border-gray-200 rounded">
               <input name="search_filter_ingredient" placeholder=""
-                class="filter-searchbar p-1 appearance-none outline-none w-full text-gray-800">
+                class="filter-searchbar input input-ingredientSbar p-1 appearance-none outline-none w-full text-gray-800">
+              <button id="" class="btn-input-remove w-4 hidden" data-target="ingredientSbar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-full" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                  <path d="M15 15L8.5 8.5M8.5 8.5L2 2M8.5 8.5L15 2M8.5 8.5L2 15" stroke="#7A7A7A" stroke-width="2.16667"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
               <div class="text-gray-300 w-8 py-1 pl-2 pr-1 flex items-center border-gray-200">
                 <button class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,16 +67,18 @@
           </div>
           <ul class="flex flex-col pt-[24px] w-full overflow-auto max-h-[211px] h-fit">
             <template id="list-item">
-              <li data-value="" class="select-option last:rounded-[10px] px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
+              <li data-value=""
+                class="select-option last:rounded-[10px] px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
               </li>
             </template>
           </ul>
         </div>
       </div>
-       <div class="custom-select custom-select--appliance relative bg-white rounded-[11px]">
+      <div class="custom-select custom-select--appliance relative bg-white rounded-[11px]">
         <div class="custom-select-action px-[16px] py-[17px] gap-[63px] flex items-center">
           <span class="cursor-default">Appareils</span>
-          <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none">
+          <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8"
+            fill="none">
             <path d="M1 1L7.5 7L14 1" stroke="#1B1B1B" stroke-linecap="round" />
           </svg>
         </div>
@@ -71,7 +87,13 @@
           <div class="w-full">
             <div class=" mx-[16px] bg-white flex border border-gray-200 rounded">
               <input name="search_filter_appliance" placeholder=""
-                class="filter-searchbar p-1 appearance-none outline-none w-full text-gray-800">
+                class="filter-searchbar input input-applianceSbar p-1 appearance-none outline-none w-full text-gray-800">
+                <button id="" class="btn-input-remove w-4 hidden" data-target="applianceSbar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-full" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                  <path d="M15 15L8.5 8.5M8.5 8.5L2 2M8.5 8.5L15 2M8.5 8.5L2 15" stroke="#7A7A7A" stroke-width="2.16667"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
               <div class="text-gray-300 w-8 py-1 pl-2 pr-1 flex items-center border-gray-200">
                 <button class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -93,7 +115,8 @@
       <div class="custom-select custom-select--ustensil relative bg-white rounded-[11px]">
         <div class="custom-select-action px-[16px] py-[17px] gap-[63px] flex items-center">
           <span class="cursor-default">Ustensiles</span>
-          <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none">
+          <svg class="icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8"
+            fill="none">
             <path d="M1 1L7.5 7L14 1" stroke="#1B1B1B" stroke-linecap="round" />
           </svg>
         </div>
@@ -102,7 +125,13 @@
           <div class="w-full">
             <div class=" mx-[16px] bg-white flex border border-gray-200 rounded">
               <input name="search_filter_ustensil" placeholder=""
-                class="filter-searchbar p-1 appearance-none outline-none w-full text-gray-800">
+                class="filter-searchbar input input-ustensilSbar p-1 appearance-none outline-none w-full text-gray-800">
+                <button id="" class="btn-input-remove w-4 hidden" data-target="ustensilSbar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-full" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                  <path d="M15 15L8.5 8.5M8.5 8.5L2 2M8.5 8.5L15 2M8.5 8.5L2 15" stroke="#7A7A7A" stroke-width="2.16667"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
               <div class="text-gray-300 w-8 py-1 pl-2 pr-1 flex items-center border-gray-200">
                 <button class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -125,7 +154,8 @@
     </div>
     <div class="tagWp flex mt-[21px] gap-[64px]">
       <template id="tag">
-        <div class="tag w-fit flex items-center gap-[10px] justify-between h-[53px] rounded-[10px] px-[18px] py-[17px] bg-warning">
+        <div
+          class="tag w-fit flex items-center gap-[10px] justify-between h-[53px] rounded-[10px] px-[18px] py-[17px] bg-warning">
           <span class="tagValue">Lait de coco</span>
           <button class="btn-close">✕</button>
         </div>

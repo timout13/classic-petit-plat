@@ -36,9 +36,15 @@ async function initPage() {
 
   const allSelect = document.querySelectorAll(".custom-select-action");
   buildRecipeWpChild(unformattedRecipes);
-  let prevSearchbarVal = '';
-  searchBar.addEventListener("input", (e) =>
-   prevSearchbarVal = handleSearchBar(e, unformattedRecipes, prevSearchbarVal)
+  let prevSearchbarVal = "";
+  searchBar.addEventListener(
+    "input",
+    (e) =>
+      (prevSearchbarVal = handleSearchBar(
+        e,
+        unformattedRecipes,
+        prevSearchbarVal
+      ))
   );
   allSelect.forEach((select) => {
     select.addEventListener("click", handleCustomSelect);
@@ -50,13 +56,15 @@ async function initPage() {
     tag || tagTemplate(tagValue);
     tag = document.querySelector(`[data-tagValue="${tagValue}"]`).parentNode;
     searchbar.value = "";
-    searchbar.setAttribute('data-userSearch', "");
+    searchbar.setAttribute("data-userSearch", "");
     const tagBtnClose = tag.querySelector(".btn-close");
     tagBtnClose.addEventListener("click", (e) => {
       tag.remove();
       buildRecipeWpChild(unformattedRecipes);
     });
   });
+  removeSbarContent(unformattedRecipes);
+  displayRmvBtnSbar();
 }
 // eee
 function handleSearchBar(e, unformattedRecipes, prevSearchbarVal) {
@@ -67,14 +75,14 @@ function handleSearchBar(e, unformattedRecipes, prevSearchbarVal) {
     e.target.setAttribute("data-userSearch", userSearch);
     buildRecipeWpChild(unformattedRecipes);
   } else {
-    if (userSearch.length > 2 && userSearch.length > prevSearchbarVal.length ) {
+    if (userSearch.length > 2) {
       btn_mainSearchBar.disabled = false;
       btn_mainSearchBar.setAttribute("data-value", userSearch);
       e.target.setAttribute("data-userSearch", userSearch);
       buildRecipeWpChild(unformattedRecipes);
-    } 
+    }
   }
-  return prevSearchbarVal = userSearch;
+  return (prevSearchbarVal = userSearch);
 }
 /* Filter data & build recipe card */
 function buildRecipeWpChild(unformattedRecipes) {
@@ -87,6 +95,7 @@ function buildRecipeWpChild(unformattedRecipes) {
   let recipeWp = document.querySelector(".recipeWp");
   recipeWp.replaceChildren();
   if (filteredRecipes.length > 0) {
+    console.log("ok");
     appendToSelects({
       keyname: "ingredient",
       unformattedRecipes: unformattedRecipes,
@@ -100,7 +109,9 @@ function buildRecipeWpChild(unformattedRecipes) {
       unformattedRecipes: unformattedRecipes,
     });
     updateRecipeCounter(filteredRecipes.length);
-    filteredRecipes.forEach((recipe) => recipeWp.append(recipeTemplate(recipe)));
+    filteredRecipes.forEach((recipe) =>
+      recipeWp.append(recipeTemplate(recipe))
+    );
   } else {
     recipeWp.append(noResultText(userSearchBar));
     updateRecipeCounter(0);
@@ -224,10 +235,9 @@ function appendToSelects(
       ".custom-select--appliance .custom-select-search ul"
     );
   }
-
-filterList = advancedUserSearch
-? searchInFilters(filterList, advancedUserSearch)
-: searchInFilters(filterList, "");
+  filterList = advancedUserSearch
+    ? searchInFilters(filterList, advancedUserSearch)
+    : searchInFilters(filterList, "");
   //Remove old list
   let allChilds = domList.querySelectorAll("[data-delete]"); //Selectionner les enfants du select concerné uniquement
   if (!init) {
@@ -259,15 +269,35 @@ function filterSearchBar(unformattedRecipes) {
   });
 }
 
+function removeSbarContent(unformattedRecipes) {
+  const btnSearbars = document.querySelectorAll(".btn-input-remove");
+  btnSearbars.forEach((btnSearbar) => {
+    btnSearbar.addEventListener("click", (e) => {
+      const target = btnSearbar.getAttribute("data-target");
+      const searchbar = document.querySelector(`.input-${target}`);
+      console.log(searchbar);
+      searchbar.value = "";
+      searchbar.setAttribute("data-userSearch", "");
+      buildRecipeWpChild(unformattedRecipes);
+      btnSearbar.style.display = "none";
+    });
+  });
+}
+
+function displayRmvBtnSbar() {
+  const allSbars = document.querySelectorAll(".input");
+  allSbars.forEach((searchbar) => {
+    let btnRmv = searchbar.nextElementSibling;
+    console.log(btnRmv);
+    searchbar.addEventListener("focusin", (e) => {
+      btnRmv.style.display = "block";
+    });
+    searchbar.addEventListener("focusout", (e) => {
+      if (searchbar.value.length == 0) {
+        btnRmv.style.display = "none";
+      }
+    });
+  });
+}
+
 initPage();
-
-// Filtrer dans recherche principale 'tomate'
-
-// Est-ce qu'il faut faire une liste de tous les ingrédients dont la recette comporte aussi l'ingrédient 'tomate'
-
-// Au clique de la serachbar du select quel réaction ?
-
-// Prendre toutes les recettes et filtrer par 'tomate'
-// Envoyer les recettes dans les selects
-// Prends les ingrédients, etc, de chaque recette et faire la liste
-// Afficher la liste

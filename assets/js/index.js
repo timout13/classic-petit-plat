@@ -7,7 +7,7 @@ import {
 import { recipeTemplate } from "./template/recipe.js";
 import { noResultText } from "./template/no-result.js";
 import { tagTemplate } from "./template/tag.js";
-import { listItemTemplate } from "./template/list-item.js";
+import { listItemTemplate, listItemRemove } from "./template/list-item.js";
 import { ajaxRequest } from "./utils/ajaxRequest.js";
 import { getSortedList } from "./utils/getSortedList.js";
 
@@ -17,21 +17,23 @@ async function initPage() {
     .then((res) => res)
     .catch((err) => console.log(err));
   const searchBar = document.querySelector('[name="searchbar"]');
-  appendToSelects(
+  /* Init Custom Select */
+  replaceSelectList(
     { keyname: "ingredient", unformattedRecipes: unformattedRecipes },
     "",
     true
   );
-  appendToSelects(
+  replaceSelectList(
     { keyname: "ustensil", unformattedRecipes: unformattedRecipes },
     "",
     true
   );
-  appendToSelects(
+  replaceSelectList(
     { keyname: "appliance", unformattedRecipes: unformattedRecipes },
     "",
     true
   );
+  
   filterSearchBar(unformattedRecipes);
 
   const allSelect = document.querySelectorAll(".custom-select-action");
@@ -50,6 +52,8 @@ async function initPage() {
     select.addEventListener("click", handleCustomSelect);
   });
   selectAddEventToItem(unformattedRecipes);
+  
+  /* Creates tag from the main searchbar */
   btn_mainSearchBar.addEventListener("click", (e) => {
     let tagValue = searchbar.value;
     let tag = document.querySelector(`[data-tagValue="${tagValue}"`);
@@ -66,7 +70,8 @@ async function initPage() {
   removeSbarContent(unformattedRecipes);
   displayRmvBtnSbar();
 }
-// eee
+
+/* launch the search by taking into account the search length */
 function handleSearchBar(e, unformattedRecipes, prevSearchbarVal) {
   let userSearch = e.target.value;
   if (userSearch.length < prevSearchbarVal.length) {
@@ -84,7 +89,8 @@ function handleSearchBar(e, unformattedRecipes, prevSearchbarVal) {
   }
   return (prevSearchbarVal = userSearch);
 }
-/* Filter data & build recipe card */
+
+/* Filter data & build recipe card & select lists */
 function buildRecipeWpChild(unformattedRecipes) {
   let { formattedRecipes, userSearchBar, tagValues } =
     getVarsToFilter(unformattedRecipes);
@@ -95,16 +101,15 @@ function buildRecipeWpChild(unformattedRecipes) {
   let recipeWp = document.querySelector(".recipeWp");
   recipeWp.replaceChildren();
   if (filteredRecipes.length > 0) {
-    console.log("ok");
-    appendToSelects({
+    replaceSelectList({
       keyname: "ingredient",
       unformattedRecipes: unformattedRecipes,
     });
-    appendToSelects({
+    replaceSelectList({
       keyname: "ustensil",
       unformattedRecipes: unformattedRecipes,
     });
-    appendToSelects({
+    replaceSelectList({
       keyname: "appliance",
       unformattedRecipes: unformattedRecipes,
     });
@@ -117,17 +122,19 @@ function buildRecipeWpChild(unformattedRecipes) {
     updateRecipeCounter(0);
   }
 }
+
+/* Get all the mandatory variables to apply filter() */
 function getVarsToFilter(unformattedRecipes) {
   let formattedRecipes = formatRecipes(unformattedRecipes);
-  // Mettre dans une var data-userSearch
   const searchBar = document.querySelector('[name="searchbar"]');
   let userSearchBar = searchBar.getAttribute("data-userSearch");
-  // Récupère valeurs des tags pour filtrer
   const tagValues = Array.from(
     document.querySelectorAll("[data-tagValue]")
   ).map((element) => element.getAttribute("data-tagValue"));
   return { formattedRecipes, userSearchBar, tagValues };
 }
+
+/* Return all the recipes filtered by the  user search and the tag values */
 function filter(recipes, userSearch = "", tagValues = []) {
   if (userSearch != "") {
     recipes = search(recipes, userSearch);
@@ -146,6 +153,7 @@ function updateRecipeCounter(counter) {
   let recipeCounter = document.querySelector("#nb-recipe");
   recipeCounter.innerHTML = `${counter} Recette(s)`;
 }
+
 /* Apply listeners to all select item */
 function selectAddEventToItem(unformattedRecipes) {
   const allSelectOptions = document.querySelectorAll(".select-option");
@@ -155,6 +163,8 @@ function selectAddEventToItem(unformattedRecipes) {
     );
   });
 }
+
+/* Open/Close the selects */
 function handleCustomSelect(e) {
   const selectAction = e.currentTarget;
   const dropdown = selectAction.nextElementSibling;
@@ -166,12 +176,17 @@ function handleCustomSelect(e) {
     dropdown.classList.add("hidden");
   }
 }
+
+/* Create a new tag & reload the search with new tag */
 function handleSelectFilter(e, unformattedRecipes) {
+  // get the value of the new tag
   let filterValue = e.target.getAttribute("data-value");
+  // verify if tag exists, create one if not
   let tag = document.querySelector(`[data-tagValue="${filterValue}"]`);
-  // crée un tag pour la valeur sélectionnée
   tag || tagTemplate(filterValue);
+  // reload search with the new tag
   tag || buildRecipeWpChild(unformattedRecipes);
+  // apply an listener on btn to remove the tag
   tag = document.querySelector(`[data-tagValue="${filterValue}"]`).parentNode;
   const tagBtnClose = tag.querySelector(".btn-close");
   tagBtnClose.addEventListener("click", (e) => {
@@ -179,6 +194,8 @@ function handleSelectFilter(e, unformattedRecipes) {
     buildRecipeWpChild(unformattedRecipes);
   });
 }
+
+/* Functions to get filtered list for custom selects */
 function getIngredient(recipes) {
   const allIngredients = recipes.map((recipe) =>
     recipe.ingredients.map((ingredient) => ingredient.ingredient.toLowerCase())
@@ -198,13 +215,14 @@ function getAppliances(recipes) {
   const sortedAppliancesList = getSortedList(allAppliances);
   return sortedAppliancesList;
 }
-/* Function -- appendToSelects() :
+
+/* Function -- replaceSelectList() :
   Filter list by userSearch / 
   Remove old list /
   Create new items /
   Append its & apply listeners
 */
-function appendToSelects(
+function replaceSelectList(
   { keyname, unformattedRecipes },
   advancedUserSearch,
   init = false
@@ -248,11 +266,17 @@ function appendToSelects(
   }
   // Create new items
   filterList.forEach((itemList) => {
-    listItemTemplate(itemList, domList);
+    listItemTemplate(itemList, domList, tagValues);
+    listItemRemove(itemList);
   });
   // Apply listeners
   selectAddEventToItem(unformattedRecipes);
 }
+
+/* 
+  Init select searchbars
+  Get searbar's values & apply replaceSelectList()
+ */
 function filterSearchBar(unformattedRecipes) {
   const allFilterSearchBar = document.querySelectorAll(".filter-searchbar");
   allFilterSearchBar.forEach((filterSearchBar) => {
@@ -264,18 +288,21 @@ function filterSearchBar(unformattedRecipes) {
         keyname: filterSearchBar.name,
         unformattedRecipes: unformattedRecipes,
       };
-      appendToSelects(filterObject, advancedUserSearch);
+      replaceSelectList(filterObject, advancedUserSearch);
     });
   });
 }
 
+/* 
+  Remove the content of the searchbars
+  Reload the search by default
+ */
 function removeSbarContent(unformattedRecipes) {
   const btnSearbars = document.querySelectorAll(".btn-input-remove");
   btnSearbars.forEach((btnSearbar) => {
     btnSearbar.addEventListener("click", (e) => {
       const target = btnSearbar.getAttribute("data-target");
       const searchbar = document.querySelector(`.input-${target}`);
-      console.log(searchbar);
       searchbar.value = "";
       searchbar.setAttribute("data-userSearch", "");
       buildRecipeWpChild(unformattedRecipes);
@@ -284,11 +311,13 @@ function removeSbarContent(unformattedRecipes) {
   });
 }
 
+/* 
+  Handle the display of the remove btn of searchbars
+ */
 function displayRmvBtnSbar() {
   const allSbars = document.querySelectorAll(".input");
   allSbars.forEach((searchbar) => {
     let btnRmv = searchbar.nextElementSibling;
-    console.log(btnRmv);
     searchbar.addEventListener("focusin", (e) => {
       btnRmv.style.display = "block";
     });

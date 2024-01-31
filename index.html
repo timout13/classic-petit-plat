@@ -66,11 +66,6 @@
             </div>
           </div>
           <ul class="flex flex-col pt-[24px] w-full overflow-auto max-h-[211px] h-fit">
-            <template id="list-item">
-              <li data-value=""
-                class="select-option last:rounded-[10px] px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
-              </li>
-            </template>
           </ul>
         </div>
       </div>
@@ -105,10 +100,6 @@
             </div>
           </div>
           <ul class="flex flex-col pt-[24px] w-full overflow-auto max-h-[211px] h-fit">
-            <template id="list-item">
-              <li data-value="" class="select-option px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
-              </li>
-            </template>
           </ul>
         </div>
       </div>
@@ -144,8 +135,14 @@
           </div>
           <ul class="flex flex-col pt-[24px] w-full overflow-auto max-h-[211px] h-fit">
             <template id="list-item">
-              <li data-value="" class="select-option px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
+              <li data-value="" class="select-option flex items-center justify-between px-[16px] py-[9px] cursor-pointer w-full hover:bg-warning">
               </li>
+              <button class="btn-list-remove">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                  <circle cx="8.5" cy="8.5" r="8.5" fill="black"/>
+                  <path d="M11 11L8.5 8.5M8.5 8.5L6 6M8.5 8.5L11 6M8.5 8.5L6 11" stroke="#FFD15B" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
             </template>
           </ul>
         </div>

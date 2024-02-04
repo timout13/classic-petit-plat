@@ -17,3 +17,10 @@
 .custom-select--reverse .icon-dropdown{
  transform: rotate(180deg);
 }
+
+/* .btn-list-remove.show svg{
+  display: block;
+}
+.btn-list-remove svg{
+  display: none;
+} */

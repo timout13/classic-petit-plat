@@ -7,7 +7,7 @@ import {
 import { recipeTemplate } from "./template/recipe.js";
 import { noResultText } from "./template/no-result.js";
 import { tagTemplate } from "./template/tag.js";
-import { listItemTemplate, listItemRemove } from "./template/list-item.js";
+import { listItemTemplate } from "./template/list-item.js";
 import { ajaxRequest } from "./utils/ajaxRequest.js";
 import { getSortedList } from "./utils/getSortedList.js";
 
@@ -18,7 +18,7 @@ async function initPage() {
     .catch((err) => console.log(err));
   const searchBar = document.querySelector('[name="searchbar"]');
   /* Init Custom Select */
-  replaceSelectList(
+  /*   replaceSelectList(
     { keyname: "ingredient", unformattedRecipes: unformattedRecipes },
     "",
     true
@@ -32,12 +32,12 @@ async function initPage() {
     { keyname: "appliance", unformattedRecipes: unformattedRecipes },
     "",
     true
-  );
-  
+  ); */
+
   filterSearchBar(unformattedRecipes);
 
   const allSelect = document.querySelectorAll(".custom-select-action");
-  buildRecipeWpChild(unformattedRecipes);
+  buildRecipesAndSelectLists(unformattedRecipes);
   let prevSearchbarVal = "";
   searchBar.addEventListener(
     "input",
@@ -51,8 +51,7 @@ async function initPage() {
   allSelect.forEach((select) => {
     select.addEventListener("click", handleCustomSelect);
   });
-  selectAddEventToItem(unformattedRecipes);
-  
+
   /* Creates tag from the main searchbar */
   btn_mainSearchBar.addEventListener("click", (e) => {
     let tagValue = searchbar.value;
@@ -64,7 +63,7 @@ async function initPage() {
     const tagBtnClose = tag.querySelector(".btn-close");
     tagBtnClose.addEventListener("click", (e) => {
       tag.remove();
-      buildRecipeWpChild(unformattedRecipes);
+      buildRecipesAndSelectLists(unformattedRecipes);
     });
   });
   removeSbarContent(unformattedRecipes);
@@ -78,20 +77,20 @@ function handleSearchBar(e, unformattedRecipes, prevSearchbarVal) {
     btn_mainSearchBar.disabled = true;
     btn_mainSearchBar.setAttribute("data-value", "");
     e.target.setAttribute("data-userSearch", userSearch);
-    buildRecipeWpChild(unformattedRecipes);
+    buildRecipesAndSelectLists(unformattedRecipes);
   } else {
     if (userSearch.length > 2) {
       btn_mainSearchBar.disabled = false;
       btn_mainSearchBar.setAttribute("data-value", userSearch);
       e.target.setAttribute("data-userSearch", userSearch);
-      buildRecipeWpChild(unformattedRecipes);
+      buildRecipesAndSelectLists(unformattedRecipes);
     }
   }
   return (prevSearchbarVal = userSearch);
 }
 
 /* Filter data & build recipe card & select lists */
-function buildRecipeWpChild(unformattedRecipes) {
+function buildRecipesAndSelectLists(unformattedRecipes) {
   let { formattedRecipes, userSearchBar, tagValues } =
     getVarsToFilter(unformattedRecipes);
 
@@ -154,13 +153,13 @@ function updateRecipeCounter(counter) {
   recipeCounter.innerHTML = `${counter} Recette(s)`;
 }
 
-/* Apply listeners to all select item */
+/* Apply listeners to all select items */
 function selectAddEventToItem(unformattedRecipes) {
   const allSelectOptions = document.querySelectorAll(".select-option");
   allSelectOptions.forEach((selectOption) => {
-    selectOption.addEventListener("click", (e) =>
-      handleSelectFilter(e, unformattedRecipes)
-    );
+    selectOption.addEventListener("click", (e) => {
+      handleSelectFilter(e, unformattedRecipes);
+    });
   });
 }
 
@@ -181,18 +180,20 @@ function handleCustomSelect(e) {
 function handleSelectFilter(e, unformattedRecipes) {
   // get the value of the new tag
   let filterValue = e.target.getAttribute("data-value");
-  // verify if tag exists, create one if not
-  let tag = document.querySelector(`[data-tagValue="${filterValue}"]`);
-  tag || tagTemplate(filterValue);
-  // reload search with the new tag
-  tag || buildRecipeWpChild(unformattedRecipes);
-  // apply an listener on btn to remove the tag
-  tag = document.querySelector(`[data-tagValue="${filterValue}"]`).parentNode;
-  const tagBtnClose = tag.querySelector(".btn-close");
-  tagBtnClose.addEventListener("click", (e) => {
-    tag.remove();
-    buildRecipeWpChild(unformattedRecipes);
-  });
+  if (filterValue != null) {
+    // verify if tag exists, create one if not
+    let tag = document.querySelector(`[data-tagValue="${filterValue}"]`);
+    tag || tagTemplate(filterValue);
+    // reload search with the new tag
+    tag || buildRecipesAndSelectLists(unformattedRecipes);
+    // apply an listener on btn to remove the tag
+    tag = document.querySelector(`[data-tagValue="${filterValue}"]`).parentNode;
+    const tagBtnClose = tag.querySelector(".btn-close");
+    tagBtnClose.addEventListener("click", (e) => {
+      tag.remove();
+      buildRecipesAndSelectLists(unformattedRecipes);
+    });
+  }
 }
 
 /* Functions to get filtered list for custom selects */
@@ -257,7 +258,7 @@ function replaceSelectList(
     ? searchInFilters(filterList, advancedUserSearch)
     : searchInFilters(filterList, "");
   //Remove old list
-  let allChilds = domList.querySelectorAll("[data-delete]"); //Selectionner les enfants du select concerné uniquement
+  let allChilds = domList.querySelectorAll("[data-delete]");
   if (!init) {
     allChilds.length > 0 &&
       allChilds.forEach((child) => {
@@ -266,8 +267,9 @@ function replaceSelectList(
   }
   // Create new items
   filterList.forEach((itemList) => {
-    listItemTemplate(itemList, domList, tagValues);
-    listItemRemove(itemList);
+    listItemTemplate(itemList, domList, tagValues, () =>
+      buildRecipesAndSelectLists(unformattedRecipes)
+    );
   });
   // Apply listeners
   selectAddEventToItem(unformattedRecipes);
@@ -305,7 +307,7 @@ function removeSbarContent(unformattedRecipes) {
       const searchbar = document.querySelector(`.input-${target}`);
       searchbar.value = "";
       searchbar.setAttribute("data-userSearch", "");
-      buildRecipeWpChild(unformattedRecipes);
+      buildRecipesAndSelectLists(unformattedRecipes);
       btnSearbar.style.display = "none";
     });
   });

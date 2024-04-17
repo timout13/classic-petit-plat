@@ -15,10 +15,11 @@
       CHERCHEZ PARMI PLUS DE 1500 RECETTES DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES
     </h1>
     <div class="searchbar relative h-[72px] block max-w-[954px] w-full m-auto">
+      <label for="searchbar" class="hidden">Recherche principale :</label>
       <input type="text" id="searchbar" name="searchbar" data-userSearch=""
         class="input-mainSbar input h-[72px] px-[35px] w-full rounded-[11px]"
         placeholder="Rechercher une recette, un ingrédient, ..." />
-      <button id="" class="btn-input-remove hidden absolute right-0 top-1/2 translate-x-[-80px] translate-y-[-50%]" data-target="mainSbar">
+      <button class="btn-input-remove hidden absolute right-0 top-1/2 translate-x-[-80px] translate-y-[-50%]" data-target="mainSbar">
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
           <path d="M15 15L8.5 8.5M8.5 8.5L2 2M8.5 8.5L15 2M8.5 8.5L2 15" stroke="#7A7A7A" stroke-width="2.16667"
             stroke-linecap="round" stroke-linejoin="round" />
@@ -47,7 +48,8 @@
           class="custom-select-search rounded-b-[11px] hidden bg-white w-full flex-col items-center absolute bottom-0 translate-y-full  z-10">
           <div class="w-full">
             <div class=" mx-[16px] bg-white flex border border-gray-200 rounded">
-              <input name="search_filter_ingredient" placeholder=""
+              <label for="search_filter_ingredient" class="hidden">Filtre d'ingrédients :</label>
+              <input type="text" name="search_filter_ingredient" id="search_filter_ingredient"  placeholder=""
                 class="filter-searchbar input input-ingredientSbar p-1 appearance-none outline-none w-full text-gray-800">
               <button class="btn-input-remove w-4 hidden" data-target="ingredientSbar">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-full" width="17" height="17" viewBox="0 0 17 17" fill="none">
@@ -81,7 +83,8 @@
           class="custom-select-search rounded-b-[11px] hidden bg-white w-full flex-col items-center absolute bottom-0 translate-y-full  z-10">
           <div class="w-full">
             <div class=" mx-[16px] bg-white flex border border-gray-200 rounded">
-              <input name="search_filter_appliance" placeholder=""
+              <label for="search_filter_appliance" class="hidden">Filtre d'appareil :</label>
+              <input type="text" id="search_filter_appliance" name="search_filter_appliance" placeholder=""
                 class="filter-searchbar input input-applianceSbar p-1 appearance-none outline-none w-full text-gray-800">
                 <button class="btn-input-remove w-4 hidden" data-target="applianceSbar">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-full" width="17" height="17" viewBox="0 0 17 17" fill="none">
@@ -115,7 +118,8 @@
           class="custom-select-search rounded-b-[11px] hidden bg-white w-full flex-col items-center absolute bottom-0 translate-y-full  z-10">
           <div class="w-full">
             <div class=" mx-[16px] bg-white flex border border-gray-200 rounded">
-              <input name="search_filter_ustensil" placeholder=""
+              <label for="search_filter_ustensil" class="hidden">Filtre d'ustensiles :</label>
+              <input type="text" name="search_filter_ustensil" id="search_filter_ustensil" placeholder=""
                 class="filter-searchbar input input-ustensilSbar p-1 appearance-none outline-none w-full text-gray-800">
                 <button class="btn-input-remove w-4 hidden" data-target="ustensilSbar">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-full" width="17" height="17" viewBox="0 0 17 17" fill="none">

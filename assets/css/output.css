@@ -909,7 +909,7 @@ video {
 }
 
 .bg-hero-pattern{
-  background-image: url('/assets/img/hero_bg.png');
+  background-image: url('../img/hero_bg.png');
 }
 
 .bg-cover{
@@ -1116,13 +1116,6 @@ video {
 .custom-select--reverse .icon-dropdown{
   transform: rotate(180deg);
 }
-
-/* .btn-list-remove.show svg{
-  display: block;
-}
-.btn-list-remove svg{
-  display: none;
-} */
 
 .hover\:bg-warning:hover{
   --tw-bg-opacity: 1;

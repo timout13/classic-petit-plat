@@ -715,6 +715,10 @@ video {
   max-height: 211px;
 }
 
+.w-4{
+  width: 1rem;
+}
+
 .w-6{
   width: 1.5rem;
 }
@@ -754,6 +758,11 @@ video {
 
 .translate-x-\[-10px\]{
   --tw-translate-x: -10px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-x-\[-80px\]{
+  --tw-translate-x: -80px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -900,7 +909,7 @@ video {
 }
 
 .bg-hero-pattern{
-  background-image: url('/assets/img/hero_bg.png');
+  background-image: url('../img/hero_bg.png');
 }
 
 .bg-cover{
@@ -1106,10 +1115,6 @@ video {
 
 .custom-select--reverse .icon-dropdown{
   transform: rotate(180deg);
-}
-
-.last\:rounded-\[10px\]:last-child{
-  border-radius: 10px;
 }
 
 .hover\:bg-warning:hover{

@@ -15,8 +15,7 @@ module.exports = {
         grey: "#EDEDED",
       },
       backgroundImage: {
-        "hero-pattern": "url('/assets/img/hero_bg.png')",
-        "footer-texture": "url('/img/footer-texture.png')",
+        "hero-pattern": "url('../img/hero_bg.png')",
       },
       padding: {
         container: "69px",

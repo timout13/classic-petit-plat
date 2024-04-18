@@ -1,3 +1,4 @@
+/* Return the dom element for the 0 results situation */
 export function noResultText(userSearch) {
     const template_noresult = document.querySelector("#template_noresult");
     let node = template_noresult.content.cloneNode(true);
